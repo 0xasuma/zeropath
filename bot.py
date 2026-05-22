@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ZeroPath Telegram Bot - Launches Mini App."""
+import os
 import logging
 from telegram import Update, WebAppInfo, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes
@@ -7,7 +8,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-BOT_TOKEN = "8999172798:AAFhMw7BNP707024McuIOHLXjcn11eTqZDM"
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 WEBAPP_URL = "https://zeropath.secure-dana.my.id/"
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -42,6 +43,9 @@ async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 def main():
+    if not BOT_TOKEN:
+        logger.error("BOT_TOKEN environment variable not set!")
+        return
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_cmd))
